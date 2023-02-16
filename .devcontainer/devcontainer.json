@@ -1,0 +1,36 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+    "name": "Go",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/go:1.20-bullseye",
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    // "features": {},
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        7000,
+        4560
+    ],
+    "otherPortsAttributes": {
+        "onAutoForward": "ignore"
+    },
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postAttachCommand": "cd .. && curl -L https://github.com/fatedier/frp/releases/download/v0.45.0/frp_0.45.0_linux_amd64.tar.gz | tar -xz && ./frp_0.45.0_linux_amd64/frps",
+    // Configure tool-specific properties.
+    // "customizations": {},
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "root"
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "github.copilot",
+                "eamodio.gitlens",
+                "golang.go",
+                "liuchao.go-struct-tag",
+                "davidwang.ini-for-vscode",
+                "redhat.vscode-yaml",
+                "irongeek.vscode-env"
+            ]
+        }
+    }
+}
