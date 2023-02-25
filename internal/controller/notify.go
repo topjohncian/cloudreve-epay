@@ -1,8 +1,11 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
+	"github.com/avast/retry-go"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/lo"
 	"github.com/shopspring/decimal"
@@ -63,22 +66,31 @@ func (pc *CloudrevePayController) Notify(c *gin.Context) {
 			return
 		}
 
-		var notifyRes NotifyResponse
-		resp, err := pc.Client.R().SetSuccessResult(&notifyRes).Get(order.NotifyUrl)
+		err = retry.Do(func() error {
+			var notifyRes NotifyResponse
+			resp, err := pc.Client.R().SetSuccessResult(&notifyRes).Get(order.NotifyUrl)
+			if err != nil {
+				logrus.WithField("id", orderId).WithError(err).Errorln("通知失败")
+				return err
+			}
+
+			if !resp.IsSuccessState() {
+				logrus.WithField("id", orderId).WithField("dump", resp.Dump()).Errorln("通知失败")
+				return errors.New("http code: " + strconv.Itoa(resp.StatusCode))
+			}
+
+			if notifyRes.Code != 0 {
+				logrus.WithField("id", orderId).WithField("dump", resp.Dump()).WithField("error", notifyRes.Error).Errorln("通知失败")
+				return errors.New("code: " + strconv.Itoa(notifyRes.Code) + ", error: " + notifyRes.Error)
+			}
+
+			return nil
+		}, retry.Attempts(5), retry.Delay(10), retry.OnRetry(func(n uint, err error) {
+			logrus.WithField("id", orderId).WithField("n", n).WithError(err).Infoln("通知失败，重试")
+		}))
+
 		if err != nil {
 			logrus.WithField("id", orderId).WithError(err).Errorln("通知失败")
-			c.String(400, "fail")
-			return
-		}
-
-		if !resp.IsSuccessState() {
-			logrus.WithField("id", orderId).WithField("dump", resp.Dump()).Errorln("通知失败")
-			c.String(400, "fail")
-			return
-		}
-
-		if notifyRes.Code != 0 {
-			logrus.WithField("id", orderId).WithField("dump", resp.Dump()).WithField("error", notifyRes.Error).Errorln("通知失败")
 			c.String(400, "fail")
 			return
 		}
@@ -94,7 +106,5 @@ func (pc *CloudrevePayController) Notify(c *gin.Context) {
 }
 
 func (pc *CloudrevePayController) Return(c *gin.Context) {
-	html := "<script>alert('支付完成');window.close()</script>"
-	c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-	c.String(http.StatusOK, html)
+	c.HTML(http.StatusOK, "return.tmpl", gin.H{})
 }

@@ -3,6 +3,7 @@ package appentry
 import (
 	"context"
 	"errors"
+	"io/fs"
 	"net"
 	"net/http"
 
@@ -12,8 +13,9 @@ import (
 	"go.uber.org/fx"
 )
 
-func Bootstrap() {
+func Bootstrap(templateFS fs.FS) {
 	opts := []fx.Option{}
+	opts = append(opts, fx.Supply(fx.Annotate(templateFS, fx.As(new(fs.FS)))))
 	opts = append(opts, AppEntry()...)
 	opts = append(opts, fx.Invoke(run))
 

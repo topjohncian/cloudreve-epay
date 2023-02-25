@@ -139,12 +139,8 @@ func (pc *CloudrevePayController) PurchasePage(c *gin.Context) {
 
 	endpoint, purchaseParams := client.Purchase(args)
 
-	html := "<form id='purchase' name='purchase' action='" + endpoint + "' method='POST'>"
-	for key, value := range purchaseParams {
-		html += "<input type='hidden' name='" + key + "' value='" + value + "'/>"
-	}
-	html += "<input type='submit' value='支付'/></form><script>document.forms['purchase'].submit();</script>"
-
-	c.Writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-	c.String(http.StatusOK, html)
+	c.HTML(http.StatusOK, "purchase.tmpl", gin.H{
+		"Endpoint": endpoint,
+		"Params":   purchaseParams,
+	})
 }

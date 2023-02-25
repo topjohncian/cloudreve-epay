@@ -1,0 +1,8 @@
+<form id='purchase' name='purchase' action='{{.Endpoint}}' method='POST'>
+    {{range $key,$value := .Params}}
+        <input type='hidden' name='{{$key}}' value='{{$value}}' />
+    {{end}}
+    <input type='submit' value='支付'/>
+</form>
+
+<script>document.forms['purchase'].submit();</script>

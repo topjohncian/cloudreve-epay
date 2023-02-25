@@ -9,6 +9,7 @@ type Config struct {
 	EpayPartnerID string `required:"true" split_words:"true"`
 	EpayKey       string `required:"true" split_words:"true"`
 	EpayEndpoint  string `required:"true" split_words:"true"`
+	EpayPurchaseType string `default:"alipay" split_words:"true"`
 
 	RedisEnabled  bool   `default:"false" split_words:"true"`
 	RedisServer   string `default:"localhost:6379" split_words:"true"`

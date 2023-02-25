@@ -17,8 +17,9 @@ var (
 )
 
 func Parse() (*Config, error) {
-	err := godotenv.Load(filepath.Join(Root, ".env"))
 
+	err := godotenv.Load(".env")
+	_ = godotenv.Load(filepath.Join(Root, ".env"))
 	if err != nil {
 		logrus.WithError(err).Fatalln("无法加载 .env 文件")
 		return nil, err
