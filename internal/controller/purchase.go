@@ -131,6 +131,10 @@ func (pc *CloudrevePayController) PurchasePage(c *gin.Context) {
 		ReturnUrl:      baseURL.ResolveReference(returnURL),
 	}
 
+	if pc.Conf.CustomName != "" {
+		args.Name = pc.Conf.CustomName
+	}
+
 	client := epay.NewClient(&epay.Config{
 		PartnerID: pc.Conf.EpayPartnerID,
 		Key:       pc.Conf.EpayKey,
