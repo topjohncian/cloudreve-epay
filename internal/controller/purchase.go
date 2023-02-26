@@ -122,7 +122,7 @@ func (pc *CloudrevePayController) PurchasePage(c *gin.Context) {
 	amount := decimal.NewFromInt(int64(order.Amount)).Div(decimal.NewFromInt(100)).StringFixedBank(2)
 
 	args := &epay.PurchaseArgs{
-		Type:           epay.Alipay,
+		Type:           epay.PurchaseType(pc.Conf.EpayPurchaseType),
 		ServiceTradeNo: order.OrderNo,
 		Name:           order.Name,
 		Money:          amount,

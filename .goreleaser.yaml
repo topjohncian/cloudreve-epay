@@ -1,57 +1,43 @@
 before:
   hooks:
-  - go mod tidy
+    - go mod tidy
 builds:
-- env:
-  - CGO_ENABLED=0
+  - env:
+      - CGO_ENABLED=0
 
-  binary: cloudreve_epay
+    binary: cloudreve_epay
 
-  goos:
-  - linux
-  - windows
-  - darwin
+    goos:
+      - linux
+      - windows
+      - darwin
 
-  goarch:
-  - amd64
-  - arm
-  - arm64
-
-  goarm:
-  - 5
-  - 6
-  - 7
-
-  ignore:
-  - goos: windows
-    goarm: 5
-  - goos: windows
-    goarm: 6
-  - goos: windows
-    goarm: 7
+    goarch:
+      - amd64
+      - arm64
 
 archives:
-- format: tar.gz
-  # this name template makes the OS and Arch compatible with the results of uname.
-  name_template: >-
-    cloudreve_epay_{{.Tag}}_{{- .Os }}_{{ .Arch }} {{- if .Arm }}v{{ .Arm }}{{ end }}
-  # use zip for windows archives
-  format_overrides:
-  - goos: windows
-    format: zip
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of uname.
+    name_template: >-
+      cloudreve_epay_{{.Tag}}_{{- .Os }}_{{ .Arch }} {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - "^docs:"
+      - "^test:"
 
 release:
   draft: true
   prerelease: auto
-  target_commitish: '{{ .Commit }}'
+  target_commitish: "{{ .Commit }}"
   name_template: "{{.Version}}"
