@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 
+	"github.com/cloudreve/Cloudreve/v3/pkg/conf"
 	"github.com/sirupsen/logrus"
 	"github.com/topjohncian/cloudreve-pro-epay/appentry"
 )
@@ -14,6 +15,8 @@ import (
 var templateFS embed.FS
 
 var isEject bool
+
+var _ = conf.BackendVersion
 
 func init() {
 	flag.BoolVar(&isEject, "eject", false, "导出模板文件")
